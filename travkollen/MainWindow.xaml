@@ -7,6 +7,12 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
+        <Button x:Name="btnRandomTrack" Content="Slumpad bana" HorizontalAlignment="Left" Margin="378,339,0,0" VerticalAlignment="Top" Height="53" Width="128" Click="btnRandomTrack_Click"/>
+        <TextBox x:Name="txtDateOfBirth" HorizontalAlignment="Left" Margin="154,217,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="txtNameOfPerson" HorizontalAlignment="Left" Margin="154,180,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
+        <TextBlock HorizontalAlignment="Left" Margin="68,180,0,0" TextWrapping="Wrap" Text="Namn:" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="68,217,0,0" TextWrapping="Wrap" Text="Födelsedatum:" VerticalAlignment="Top"/>
+        <Button x:Name="btnAddPerson" Content="Lägg till person" HorizontalAlignment="Left" Margin="154,256,0,0" VerticalAlignment="Top" Width="120" Click="btnAddPerson_Click"/>
 
     </Grid>
 </Window>

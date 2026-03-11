@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace travkollen.Models
 {
-    public class Track
+    public class Person
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public int? Length { get; set; }
-        public int? Straight { get; set; }
+        public DateOnly? DateOfBirth { get; set; }
     }
 }
