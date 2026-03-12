@@ -23,8 +23,15 @@ namespace travkollen
 
             var connectionString = config.GetConnectionString("DefaultConnection");
 
-            DataSource = NpgsqlDataSource.Create(connectionString);
-        
+            DataSource = NpgsqlDataSource.Create(connectionString);        
+        }
+
+        protected override async void OnExit(ExitEventArgs e)
+        {
+            if (DataSource is not null)
+                await DataSource.DisposeAsync();
+
+            base.OnExit(e);
         }
     }
 

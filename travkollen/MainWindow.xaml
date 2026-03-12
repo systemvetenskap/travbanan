@@ -7,12 +7,27 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <Button x:Name="btnRandomTrack" Content="Slumpad bana" HorizontalAlignment="Left" Margin="378,339,0,0" VerticalAlignment="Top" Height="53" Width="128" Click="btnRandomTrack_Click"/>
-        <TextBox x:Name="txtDateOfBirth" HorizontalAlignment="Left" Margin="154,217,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="txtNameOfPerson" HorizontalAlignment="Left" Margin="154,180,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
-        <TextBlock HorizontalAlignment="Left" Margin="68,180,0,0" TextWrapping="Wrap" Text="Namn:" VerticalAlignment="Top"/>
-        <TextBlock HorizontalAlignment="Left" Margin="68,217,0,0" TextWrapping="Wrap" Text="Födelsedatum:" VerticalAlignment="Top"/>
-        <Button x:Name="btnAddPerson" Content="Lägg till person" HorizontalAlignment="Left" Margin="154,256,0,0" VerticalAlignment="Top" Width="120" Click="btnAddPerson_Click"/>
+        <Button x:Name="btnRandomTrack" Content="Slumpad bana" HorizontalAlignment="Left" Margin="27,359,0,0" VerticalAlignment="Top" Height="53" Width="128" Click="btnRandomTrack_Click"/>
+        <TextBox x:Name="txtDateOfBirth" HorizontalAlignment="Left" Margin="140,217,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="175"/>
+        <TextBox x:Name="txtNameOfPerson" HorizontalAlignment="Left" Margin="140,180,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="175"/>
+        <TextBlock HorizontalAlignment="Left" Margin="41,180,0,0" TextWrapping="Wrap" Text="Namn:" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="41,217,0,0" TextWrapping="Wrap" Text="Födelsedatum:" VerticalAlignment="Top"/>
+        <Button x:Name="btnAddPerson" Content="Lägg till person" HorizontalAlignment="Left" Margin="230,256,0,0" VerticalAlignment="Top" Width="85" Click="btnAddPerson_Click"/>
+        <Button x:Name="btnUpdatePerson" Content="Uppdatera" HorizontalAlignment="Left" Margin="140,256,0,0" VerticalAlignment="Top" Width="78" Click="btnUpdatePerson_Click" />
+        <Button x:Name="btnGetAllHorseViewModels" Content="TEst" HorizontalAlignment="Left" Margin="611,337,0,0" VerticalAlignment="Top" Height="49" Width="131" Click="btnGetAllHorseViewModels_Click"/>
+        <ComboBox x:Name="cbHorseSelector" HorizontalAlignment="Left" Margin="400,20,0,0" VerticalAlignment="Top" Width="368"/>
+        <TextBlock x:Name="tbHorseName" HorizontalAlignment="Left" Margin="400,96,0,0" TextWrapping="Wrap" Text="Namn:" VerticalAlignment="Top" Width="48"/>
+        <TextBlock x:Name="tbHorseAge" HorizontalAlignment="Left" Margin="400,117,0,0" TextWrapping="Wrap" Text="Ålder:" VerticalAlignment="Top" Width="48"/>
+        <TextBlock x:Name="tbTrainerName" HorizontalAlignment="Left" Margin="400,145,0,0" TextWrapping="Wrap" Text="Tränarnamn:" VerticalAlignment="Top" Width="74"/>
+        <TextBlock x:Name="tbTrainerTrack" HorizontalAlignment="Left" Margin="400,169,0,0" TextWrapping="Wrap" Text="Hammabana:" VerticalAlignment="Top" Width="99"/>
+        <TextBlock x:Name="tbSireName" HorizontalAlignment="Left" Margin="400,220,0,0" TextWrapping="Wrap" Text="Sire namn:" VerticalAlignment="Top" Width="99"/>
+        <TextBlock x:Name="tbDamName" HorizontalAlignment="Left" Margin="400,256,0,0" TextWrapping="Wrap" Text="Dam namn:" VerticalAlignment="Top" Width="99"/>
+        <TextBox x:Name="txtHorseName" HorizontalAlignment="Left" Margin="480,96,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="288"/>
+        <TextBox x:Name="txtHorseAge" HorizontalAlignment="Left" Margin="480,119,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="288"/>
+        <TextBox x:Name="txtTrainerName" HorizontalAlignment="Left" Margin="480,145,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="288"/>
+        <TextBox x:Name="txtTrack" HorizontalAlignment="Left" Margin="480,169,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="288"/>
+        <TextBox x:Name="txtSireName" HorizontalAlignment="Left" Margin="480,220,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="288"/>
+        <TextBox x:Name="txtDamName" HorizontalAlignment="Left" Margin="480,255,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="288"/>
 
     </Grid>
 </Window>
