@@ -85,7 +85,9 @@ namespace travkollen.repositories
 
         public async Task<HorseDetailsViewModel?> GetHorseDetailsViewModel(int id)
         {
-            string query = "select h.id as horse_id, h.name as horse_name, " +
+            try
+            {
+                string query = "select h.id as horse_id, h.name as horse_name, " +
                             "date_part('year',age(current_date,h.date_of_birth)) as age, " +
                             "p.name as trainer_name, track.name as track_name, " +
                             "sire.name as sire_name, " +
@@ -97,39 +99,44 @@ namespace travkollen.repositories
                             "left join track on track.id = t.track_id " +
                             "where h.id=@id";
 
-            await using var command = _dataSource.CreateCommand(query);
+                await using var command = _dataSource.CreateCommand(query);
 
-            command.Parameters.AddWithValue("id", id);
+                command.Parameters.AddWithValue("id", id);
 
-            await using var reader = await command.ExecuteReaderAsync();
+                await using var reader = await command.ExecuteReaderAsync();
 
-            var ordinals = new
-            {
-                Id = reader.GetOrdinal("horse_id"),
-                HorseName = reader.GetOrdinal("horse_name"),
-                Age = reader.GetOrdinal("age"),
-                TrainerName = reader.GetOrdinal("trainer_name"),
-                TrackName = reader.GetOrdinal("track_name"),
-                SireName = reader.GetOrdinal("sire_name"),
-                DamName = reader.GetOrdinal("dam_name")
-            };
-
-            while (await reader.ReadAsync())
-            {
-                HorseDetailsViewModel horse = new HorseDetailsViewModel
+                var ordinals = new
                 {
-                    Id = reader.GetFieldValue<int>(ordinals.Id),
-                    Name = reader.GetFieldValue<string>(ordinals.HorseName),
-                    Age = reader.GetFieldValue<double>(ordinals.Age),
-                    TrainerName = reader.GetFieldValue<string>(ordinals.TrainerName),
-                    TrackName = reader.IsDBNull(ordinals.TrackName) ? null : reader.GetFieldValue<string>(ordinals.TrackName),
-                    SireName = reader.IsDBNull(ordinals.SireName) ? null : reader.GetFieldValue<string?>(ordinals.SireName),
-                    DamName = reader.IsDBNull(ordinals.DamName) ? null : reader.GetFieldValue<string?>(ordinals.DamName)
-                };                
-                return horse;
-            }
+                    Id = reader.GetOrdinal("horse_id"),
+                    HorseName = reader.GetOrdinal("horse_name"),
+                    Age = reader.GetOrdinal("age"),
+                    TrainerName = reader.GetOrdinal("trainer_name"),
+                    TrackName = reader.GetOrdinal("track_name"),
+                    SireName = reader.GetOrdinal("sire_name"),
+                    DamName = reader.GetOrdinal("dam_name")
+                };
 
-            return null;
+                while (await reader.ReadAsync())
+                {
+                    HorseDetailsViewModel horse = new HorseDetailsViewModel
+                    {
+                        Id = reader.GetFieldValue<int>(ordinals.Id),
+                        Name = reader.GetFieldValue<string>(ordinals.HorseName),
+                        Age = reader.GetFieldValue<double>(ordinals.Age),
+                        TrainerName = reader.GetFieldValue<string>(ordinals.TrainerName),
+                        TrackName = reader.IsDBNull(ordinals.TrackName) ? null : reader.GetFieldValue<string>(ordinals.TrackName),
+                        SireName = reader.IsDBNull(ordinals.SireName) ? null : reader.GetFieldValue<string?>(ordinals.SireName),
+                        DamName = reader.IsDBNull(ordinals.DamName) ? null : reader.GetFieldValue<string?>(ordinals.DamName)
+                    };
+                    return horse;
+                }
+
+                return null;
+            }
+            catch (PostgresException ex)
+            {
+                throw DbExceptionHelper.Translate(ex);
+            }            
         }
 
         public async Task<List<HorseShortViewModel>> GetShortHorseViewModels()

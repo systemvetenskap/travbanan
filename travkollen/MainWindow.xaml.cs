@@ -75,7 +75,14 @@ namespace travkollen
 
         private async void btnGetAllHorseViewModels_Click(object sender, RoutedEventArgs e)
         {
-            HorseDetailsViewModel? horseVM = await _dbRepo.GetHorseDetailsViewModel(18);
+            try
+            {
+                HorseDetailsViewModel? horseVM = await _dbRepo.GetHorseDetailsViewModel(8);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private async void FillCombobox<T>(ComboBox cb, List<T> list)
