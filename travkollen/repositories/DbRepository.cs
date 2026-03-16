@@ -18,6 +18,33 @@ namespace travkollen.repositories
             _dataSource = dataSource;
         }
 
+        public async Task<bool> DeleteHorse(int id)
+        {
+            try
+            {
+                string query = "delete from horse where id=@id";
+
+                await using var command = _dataSource.CreateCommand(query);
+
+                command.Parameters.AddWithValue("id", id);
+
+                var result = await command.ExecuteNonQueryAsync();
+
+                if (result == 1)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (PostgresException ex)
+            {
+                throw DbExceptionHelper.Translate(ex);
+            }
+        }
+
         public async Task<bool> UpdatePerson(Person person)
         {
             string query = "update person " +
@@ -37,17 +64,24 @@ namespace travkollen.repositories
 
         public async Task<bool> CreateNewPerson(Person person)
         {
-            string query = "insert into person(name, date_of_birth) " +
-                            "values(@name, @date)";
+            try
+            {
+                string query = "insert into person(name, date_of_birth) " +
+                           "values(@name, @date)";
 
-            await using var command = _dataSource.CreateCommand(query);
+                await using var command = _dataSource.CreateCommand(query);
 
-            command.Parameters.AddWithValue("name", person.Name);
-            command.Parameters.AddWithValue("date", person.DateOfBirth!);
+                command.Parameters.AddWithValue("name", person.Name);
+                command.Parameters.AddWithValue("date", person.DateOfBirth!);
 
-            var result = await command.ExecuteNonQueryAsync();
-                                    
-            return result == 1;
+                var result = await command.ExecuteNonQueryAsync();
+
+                return result == 1;
+            }
+            catch (PostgresException ex)
+            {
+                throw DbExceptionHelper.Translate(ex);
+            }
         }
 
         public async Task<Track?> GetTrackById(int id)
@@ -91,7 +125,7 @@ namespace travkollen.repositories
                             "date_part('year',age(current_date,h.date_of_birth)) as age, " +
                             "p.name as trainer_name, track.name as track_name, " +
                             "sire.name as sire_name, " +
-                            "dam.name as dam_name from horse as h " +
+                            "dam.name as dam_name, h.img_url from horse as h " +
                             "left join horse as sire on sire.id = h.sire_id " +
                             "left join horse as dam on dam.id = h.dam_id " +
                             "join trainer as t on t.id = h.trainer_id " +
@@ -113,7 +147,8 @@ namespace travkollen.repositories
                     TrainerName = reader.GetOrdinal("trainer_name"),
                     TrackName = reader.GetOrdinal("track_name"),
                     SireName = reader.GetOrdinal("sire_name"),
-                    DamName = reader.GetOrdinal("dam_name")
+                    DamName = reader.GetOrdinal("dam_name"),
+                    ImgUrl = reader.GetOrdinal("img_url"),
                 };
 
                 while (await reader.ReadAsync())
@@ -126,7 +161,8 @@ namespace travkollen.repositories
                         TrainerName = reader.GetFieldValue<string>(ordinals.TrainerName),
                         TrackName = reader.IsDBNull(ordinals.TrackName) ? null : reader.GetFieldValue<string>(ordinals.TrackName),
                         SireName = reader.IsDBNull(ordinals.SireName) ? null : reader.GetFieldValue<string?>(ordinals.SireName),
-                        DamName = reader.IsDBNull(ordinals.DamName) ? null : reader.GetFieldValue<string?>(ordinals.DamName)
+                        DamName = reader.IsDBNull(ordinals.DamName) ? null : reader.GetFieldValue<string?>(ordinals.DamName),
+                        ImageUrl = reader.IsDBNull(ordinals.ImgUrl) ? null : reader.GetFieldValue<string?>(ordinals.ImgUrl)
                     };
                     return horse;
                 }

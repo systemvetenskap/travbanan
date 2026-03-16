@@ -15,5 +15,6 @@ namespace travkollen.ViewModels
         public string? TrackName { get; set; }
         public string? SireName { get; set; }
         public string? DamName { get; set; }
+        public string? ImageUrl { get; set; }
     }
 }

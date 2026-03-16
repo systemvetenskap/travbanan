@@ -24,6 +24,12 @@ namespace travkollen.repositories
 
                 case "ck_horse_parent_different":
                     return new Exception("Hästens pappa och mamma kan inte vara samma häst.", ex);
+
+                case "horse_dam_id_fkey":
+                    return new Exception("Du kan inte göra detta då det finns ett beroende i häst/dam-relationen.", ex);
+
+                case "horse_sire_id_fkey":
+                    return new Exception("Du kan inte göra detta då det finns ett beroende i häst/sire-relationen.", ex);
             }
 
             switch (ex.SqlState)
@@ -32,7 +38,7 @@ namespace travkollen.repositories
                     return new Exception($"Värde {ex.ColumnName} måste vara unikt och det du skrev förekommer redan i databasen.", ex);
 
                 case PostgresErrorCodes.ForeignKeyViolation:
-                    return new Exception("Du försöker skapa en relation till något som inte finns, vänligen kontrollera dina uppgifter.", ex);
+                    return new Exception($"Det du försöker göra går inte då det finns ett beroende, operationen avbruten. /n {ex.Message}", ex);
 
                 case PostgresErrorCodes.NotNullViolation:
                     return new Exception($"Fältet {ex.ColumnName} måste ha ett värde.", ex);
@@ -41,7 +47,7 @@ namespace travkollen.repositories
                     return new Exception("Ett värde bryter mot en databasregel.", ex);
 
                 default:
-                    return new Exception("Ett okänt databasfel har inträffat.", ex);
+                    return new Exception($"Ett okänt databasfel har inträffat. {ex.Message}", ex);
             }
         }
     }
