@@ -32,8 +32,23 @@ namespace travkollen
 
         private async void FillComboBoxes()
         {
+            List<TrainerViewModel> trainers = await _dbRepo.GetAllTrainerViewModels();
+
             List<HorseShortViewModel> horses = await _dbRepo.GetShortHorseViewModels();
+
+            HorseShortViewModel dummyHorse = new HorseShortViewModel
+            {
+                Id = null,
+                Name = "** Ingen häst vald **"
+            };
+
+            horses.Add(dummyHorse);
+
             FillCombobox<HorseShortViewModel>(cbHorseSelector, horses);
+            FillCombobox<HorseShortViewModel>(cbSire, horses);
+            FillCombobox<HorseShortViewModel>(cbDam, horses);
+            FillCombobox<TrainerViewModel>(cbTrainer, trainers);
+
         }
 
         private async void btnRandomTrack_Click(object sender, RoutedEventArgs e)
@@ -106,8 +121,9 @@ namespace travkollen
             txtHorseAge.Text = horseVM.Age.ToString();
             txtTrainerName.Text = horseVM.TrainerName;
             txtTrack.Text = horseVM.TrackName;
-            txtSireName.Text = horseVM.SireName;
-            txtDamName.Text = horseVM.DamName;
+            cbSire.SelectedValue = horseVM.SireId;
+            cbDam.SelectedValue = horseVM.DamId;
+            cbTrainer.SelectedValue = horseVM.TrainerId;
 
             if (horseVM.ImageUrl == null)
             { 
@@ -130,9 +146,9 @@ namespace travkollen
         private async void cbHorseSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var combo = sender as ComboBox;
-                        
+
             if (combo.SelectedValue == null)
-                combo.SelectedIndex = 0;
+                return;
 
             int horseId = (int)combo.SelectedValue;
 
@@ -173,5 +189,64 @@ namespace travkollen
                 }
             }
         }
+
+        private async void btnSaveHorse_Click(object sender, RoutedEventArgs e)
+        {
+            if (_currentHorseId.HasValue)
+            {
+                try
+                {
+                    Horse horse = new Horse
+                    {
+                        Id = (int)_currentHorseId,
+                        Name = txtHorseName.Text,
+                        SireId = (int?)cbSire.SelectedValue,
+                        DamId = (int?)cbDam.SelectedValue
+                    };
+
+                    bool wasUpdated = await _dbRepo.UpdateHorse(horse);
+                    if (wasUpdated)
+                    {
+                        MessageBox.Show("Hästen är nu uppdaterad i databasen.");                        
+                    }
+                    else
+                    {
+                        MessageBox.Show("Hästen kunde INTE uppdateras i databasen.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+            else
+            {
+                try
+                {
+                    Horse horse = new Horse
+                    {
+                        Name = txtHorseName.Text,
+                        DateOfBirth = DateOnly.FromDateTime(DateTime.Now),
+                        SireId = (int?)cbSire.SelectedValue,
+                        DamId = (int?)cbDam.SelectedValue,
+                        TrainerId = (int)cbTrainer.SelectedValue
+                    };
+                    bool wasAdded = await _dbRepo.CreateNewHorse(horse);
+                    if (wasAdded)
+                    {
+                        MessageBox.Show("Hästen är nu tillagd i databasen.");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Hästen kunde INTE läggas in i databasen.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+        }
+
     }
 }

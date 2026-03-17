@@ -12,9 +12,12 @@ namespace travkollen.ViewModels
         public string Name { get; set; }
         public double Age { get; set; }
         public string TrainerName { get; set; }
+        public int TrainerId { get; set; }
         public string? TrackName { get; set; }
         public string? SireName { get; set; }
+        public int? SireId { get; set; }
         public string? DamName { get; set; }
+        public int? DamId { get; set; }
         public string? ImageUrl { get; set; }
     }
 }

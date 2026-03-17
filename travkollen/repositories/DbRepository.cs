@@ -18,6 +18,45 @@ namespace travkollen.repositories
             _dataSource = dataSource;
         }
 
+        public async Task<List<TrainerViewModel>> GetAllTrainerViewModels()
+        {
+            List<TrainerViewModel> trainers = [];
+
+            string query = "select t.id as trainer_id, " +
+                            "p.id as person_id, " +
+                            "p.name as trainer_name, " +
+                            "track.name as track_name " +
+                            "from trainer as t " +
+                            "join person as p on p.id = t.person_id " +
+                            "left join track on track.id = t.track_id";
+
+            await using var command = _dataSource.CreateCommand(query);
+
+            await using var reader = await command.ExecuteReaderAsync();
+
+            var ordinals = new
+            {
+                TrainerId = reader.GetOrdinal("trainer_id"),   
+                PersonId = reader.GetOrdinal("person_id"),
+                TrainerName = reader.GetOrdinal("trainer_name"),
+                TrackName = reader.GetOrdinal("track_name")
+            };
+
+            while (await reader.ReadAsync())
+            {
+                TrainerViewModel trainer = new TrainerViewModel
+                {
+                    Id = reader.GetFieldValue<int>(ordinals.TrainerId),
+                    PersonId = reader.GetFieldValue<int>(ordinals.PersonId),                  
+                    Name = reader.GetFieldValue<string>(ordinals.TrainerName),
+                    TrackName = reader.IsDBNull(ordinals.TrackName) ? null : reader.GetFieldValue<string>(ordinals.TrackName)                  
+                };
+                trainers.Add(trainer);
+            }
+
+            return trainers;
+        }
+
         public async Task<bool> DeleteHorse(int id)
         {
             try
@@ -84,6 +123,31 @@ namespace travkollen.repositories
             }
         }
 
+        public async Task<bool> CreateNewHorse(Horse horse)
+        {
+            try
+            {
+                string query = "insert into horse(name, date_of_birth, sire_id, dam_id, trainer_id) " +
+                           "values(@name, @date, @sire_id, @dam_id, @trainer_id)";
+
+                await using var command = _dataSource.CreateCommand(query);
+
+                command.Parameters.AddWithValue("name", horse.Name);
+                command.Parameters.AddWithValue("date", horse.DateOfBirth);
+                command.Parameters.AddWithValue("sire_id", horse.SireId?? (object)DBNull.Value);
+                command.Parameters.AddWithValue("dam_id", horse.DamId ?? (object)DBNull.Value);
+                command.Parameters.AddWithValue("trainer_id", horse.TrainerId);
+
+                var result = await command.ExecuteNonQueryAsync();
+
+                return result == 1;
+            }
+            catch (PostgresException ex)
+            {
+                throw DbExceptionHelper.Translate(ex);
+            }
+        }
+
         public async Task<Track?> GetTrackById(int id)
         {
             string query = "select id, straight, name, length  from track where id=@id";
@@ -117,15 +181,31 @@ namespace travkollen.repositories
             return null;
         }
 
+        public async Task<bool> UpdateHorse(Horse horse)
+        {
+            string query = "update horse set name=@name, sire_id=@sire_id, dam_id=@dam_id where id=@id";
+
+            await using var command = _dataSource.CreateCommand(query);
+
+            command.Parameters.AddWithValue("name", horse.Name);
+            command.Parameters.AddWithValue("sire_id", horse.SireId?? (object)DBNull.Value);
+            command.Parameters.AddWithValue("dam_id", horse.DamId ?? (object)DBNull.Value);
+            command.Parameters.AddWithValue("id", horse.Id);
+
+            var result = await command.ExecuteNonQueryAsync();
+
+            return result == 1;
+        }
+
         public async Task<HorseDetailsViewModel?> GetHorseDetailsViewModel(int id)
         {
             try
             {
                 string query = "select h.id as horse_id, h.name as horse_name, " +
                             "date_part('year',age(current_date,h.date_of_birth)) as age, " +
-                            "p.name as trainer_name, track.name as track_name, " +
+                            "p.name as trainer_name, t.id as trainer_id, track.name as track_name, " +
                             "sire.name as sire_name, " +
-                            "dam.name as dam_name, h.img_url from horse as h " +
+                            "dam.name as dam_name, h.img_url, sire.id as sire_id, dam.id as dam_id from horse as h " +
                             "left join horse as sire on sire.id = h.sire_id " +
                             "left join horse as dam on dam.id = h.dam_id " +
                             "join trainer as t on t.id = h.trainer_id " +
@@ -145,10 +225,13 @@ namespace travkollen.repositories
                     HorseName = reader.GetOrdinal("horse_name"),
                     Age = reader.GetOrdinal("age"),
                     TrainerName = reader.GetOrdinal("trainer_name"),
+                    TrainerId = reader.GetOrdinal("trainer_id"),
                     TrackName = reader.GetOrdinal("track_name"),
                     SireName = reader.GetOrdinal("sire_name"),
                     DamName = reader.GetOrdinal("dam_name"),
                     ImgUrl = reader.GetOrdinal("img_url"),
+                    DamId = reader.GetOrdinal("dam_id"),
+                    SireId = reader.GetOrdinal("sire_id"),
                 };
 
                 while (await reader.ReadAsync())
@@ -159,9 +242,12 @@ namespace travkollen.repositories
                         Name = reader.GetFieldValue<string>(ordinals.HorseName),
                         Age = reader.GetFieldValue<double>(ordinals.Age),
                         TrainerName = reader.GetFieldValue<string>(ordinals.TrainerName),
+                        TrainerId = reader.GetFieldValue<int>(ordinals.TrainerId),
                         TrackName = reader.IsDBNull(ordinals.TrackName) ? null : reader.GetFieldValue<string>(ordinals.TrackName),
                         SireName = reader.IsDBNull(ordinals.SireName) ? null : reader.GetFieldValue<string?>(ordinals.SireName),
+                        SireId = reader.IsDBNull(ordinals.SireId) ? null : reader.GetFieldValue<int?>(ordinals.SireId),
                         DamName = reader.IsDBNull(ordinals.DamName) ? null : reader.GetFieldValue<string?>(ordinals.DamName),
+                        DamId = reader.IsDBNull(ordinals.DamId) ? null : reader.GetFieldValue<int?>(ordinals.DamId),
                         ImageUrl = reader.IsDBNull(ordinals.ImgUrl) ? null : reader.GetFieldValue<string?>(ordinals.ImgUrl)
                     };
                     return horse;
