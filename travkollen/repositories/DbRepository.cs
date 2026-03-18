@@ -18,6 +18,53 @@ namespace travkollen.repositories
             _dataSource = dataSource;
         }
 
+        public async Task<List<HorseShortViewModel>> SearchForHorsesByName(string searchString)
+        {
+            try
+            {
+                List<HorseShortViewModel> horses = [];
+
+                string query = "select horse.id as horse_id, " +
+                                "horse.name as horse_name, " +
+                                "person.name as trainer_name " +
+                                "from horse " +
+                                "join trainer on trainer.id = horse.trainer_id " +
+                                "join person on person.id = trainer.person_id " +
+                                "where horse.name ilike @search";
+
+                await using var command = _dataSource.CreateCommand(query);
+
+                command.Parameters.AddWithValue("search", $"%{searchString}%");
+
+                await using var reader = await command.ExecuteReaderAsync();
+
+                var ordinals = new
+                {
+                    Id = reader.GetOrdinal("horse_id"),
+                    HorseName = reader.GetOrdinal("horse_name"),
+                    TrainerName = reader.GetOrdinal("trainer_name")
+                };
+
+                while (await reader.ReadAsync())
+                {
+                    HorseShortViewModel horseVM = new HorseShortViewModel
+                    {
+                        Id = reader.GetFieldValue<int>(ordinals.Id),
+                        Name = reader.GetFieldValue<string>(ordinals.HorseName),
+                        TrainerName = reader.GetFieldValue<string>(ordinals.TrainerName)
+                    };
+
+                    horses.Add(horseVM);
+                }
+
+                return horses;
+            }
+            catch (PostgresException ex)
+            {
+                throw DbExceptionHelper.Translate(ex);
+            }
+        }
+
         public async Task<List<TrainerViewModel>> GetAllTrainerViewModels()
         {
             List<TrainerViewModel> trainers = [];

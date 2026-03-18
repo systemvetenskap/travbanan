@@ -31,6 +31,9 @@
         <Button x:Name="btnSaveHorse" Background="ForestGreen" Foreground="White" FontWeight="Bold" Content="Uppdatera häst" HorizontalAlignment="Left" Margin="625,417,0,0" VerticalAlignment="Top" Width="143" Click="btnSaveHorse_Click_1"/>
         <TextBlock x:Name="tbTrainer" HorizontalAlignment="Left" Margin="400,383,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="99"><Run Language="sv-se" Text="Tränare"/><Run Text=":"/></TextBlock>
         <ComboBox x:Name="cbTrainer" HorizontalAlignment="Left" Margin="480,383,0,0" VerticalAlignment="Top" Width="288"/>
+        <TextBox x:Name="txtSearch" HorizontalAlignment="Left" Margin="44,177,0,0" TextWrapping="Wrap" Text="Sök..." VerticalAlignment="Top" Width="205"/>
+        <ListBox x:Name="lstSearchResult" Width="300" Height="250" Margin="44,204,456,80"/>
+        <Button x:Name="btnSearch" Content="Sök" HorizontalAlignment="Left" Margin="254,177,0,0" VerticalAlignment="Top" Width="90" Height="18" Click="btnSearch_Click"/>
 
     </Grid>
 </Window>

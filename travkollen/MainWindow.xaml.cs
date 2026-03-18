@@ -270,5 +270,16 @@ namespace travkollen
                 }
             }
         }
+
+        private async void btnSearch_Click(object sender, RoutedEventArgs e)
+        {
+            string searchQuery = txtSearch.Text;
+
+            List<HorseShortViewModel> horses = await _dbRepo.SearchForHorsesByName(searchQuery);
+            lstSearchResult.ItemsSource = null;
+            lstSearchResult.ItemsSource = horses;
+            lstSearchResult.DisplayMemberPath = "Name";
+            lstSearchResult.SelectedValuePath = "Id";
+        }
     }
 }
