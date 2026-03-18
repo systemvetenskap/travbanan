@@ -123,12 +123,13 @@ namespace travkollen.repositories
             }
         }
 
-        public async Task<bool> CreateNewHorse(Horse horse)
+        public async Task<int> CreateNewHorse(Horse horse)
         {
             try
             {
                 string query = "insert into horse(name, date_of_birth, sire_id, dam_id, trainer_id) " +
-                           "values(@name, @date, @sire_id, @dam_id, @trainer_id)";
+                           "values(@name, @date, @sire_id, @dam_id, @trainer_id)" +
+                           "returning id";
 
                 await using var command = _dataSource.CreateCommand(query);
 
@@ -138,9 +139,8 @@ namespace travkollen.repositories
                 command.Parameters.AddWithValue("dam_id", horse.DamId ?? (object)DBNull.Value);
                 command.Parameters.AddWithValue("trainer_id", horse.TrainerId);
 
-                var result = await command.ExecuteNonQueryAsync();
-
-                return result == 1;
+                int horseId = (int)await command.ExecuteScalarAsync();
+                return horseId;
             }
             catch (PostgresException ex)
             {

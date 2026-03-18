@@ -38,7 +38,7 @@ namespace travkollen
 
             HorseShortViewModel dummyHorse = new HorseShortViewModel
             {
-                Id = null,
+                Id = -1,
                 Name = "** Ingen häst vald **"
             };
 
@@ -114,9 +114,29 @@ namespace travkollen
             }
         }
 
+        private void ClearCurrentHorseInfo()
+        {
+            txtHorseName.Text = string.Empty;
+            txtHorseAge.Text = string.Empty;
+            txtTrainerName.Text = string.Empty;
+            txtTrack.Text = string.Empty;
+            cbSire.SelectedValue = string.Empty;
+            cbDam.SelectedValue = string.Empty;
+            cbTrainer.SelectedValue = string.Empty;
+            imgHorse.Source = null;
+        }
+
         private void RefreshCurrentHorseInfo(HorseDetailsViewModel horseVM)
         {
             _currentHorseId = horseVM.Id;
+            if (_currentHorseId == -1)
+            {
+                ClearCurrentHorseInfo();
+                btnSaveHorse.Content = "Lägg till häst";
+            }
+            else
+                btnSaveHorse.Content = "Uppdatera häst";
+
             txtHorseName.Text = horseVM.Name;
             txtHorseAge.Text = horseVM.Age.ToString();
             txtTrainerName.Text = horseVM.TrainerName;
@@ -190,7 +210,7 @@ namespace travkollen
             }
         }
 
-        private async void btnSaveHorse_Click(object sender, RoutedEventArgs e)
+        private async void btnSaveHorse_Click_1(object sender, RoutedEventArgs e)
         {
             if (_currentHorseId.HasValue)
             {
@@ -207,7 +227,7 @@ namespace travkollen
                     bool wasUpdated = await _dbRepo.UpdateHorse(horse);
                     if (wasUpdated)
                     {
-                        MessageBox.Show("Hästen är nu uppdaterad i databasen.");                        
+                        MessageBox.Show("Hästen är nu uppdaterad i databasen.");
                     }
                     else
                     {
@@ -223,6 +243,7 @@ namespace travkollen
             {
                 try
                 {
+
                     Horse horse = new Horse
                     {
                         Name = txtHorseName.Text,
@@ -231,15 +252,17 @@ namespace travkollen
                         DamId = (int?)cbDam.SelectedValue,
                         TrainerId = (int)cbTrainer.SelectedValue
                     };
-                    bool wasAdded = await _dbRepo.CreateNewHorse(horse);
-                    if (wasAdded)
+                    int horseId = await _dbRepo.CreateNewHorse(horse);
+                    _currentHorseId = horseId;
+
+                    HorseDetailsViewModel? horseVM = await _dbRepo.GetHorseDetailsViewModel(horseId);
+                    if (horseVM != null)
                     {
+                        RefreshCurrentHorseInfo(horseVM);
                         MessageBox.Show("Hästen är nu tillagd i databasen.");
                     }
-                    else
-                    {
-                        MessageBox.Show("Hästen kunde INTE läggas in i databasen.");
-                    }
+
+
                 }
                 catch (Exception ex)
                 {
@@ -247,6 +270,5 @@ namespace travkollen
                 }
             }
         }
-
     }
 }

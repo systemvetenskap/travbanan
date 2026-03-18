@@ -28,7 +28,7 @@
         <Image x:Name="imgHorse" HorizontalAlignment="Left" Height="108" Margin="537,60,0,0" VerticalAlignment="Top" Width="144"/>
         <ComboBox x:Name="cbSire" HorizontalAlignment="Left" Margin="480,311,0,0" VerticalAlignment="Top" Width="288"/>
         <ComboBox x:Name="cbDam" HorizontalAlignment="Left" Margin="480,347,0,0" VerticalAlignment="Top" Width="288"/>
-        <Button x:Name="btnSaveHorse" Background="ForestGreen" Foreground="White" FontWeight="Bold" Content="Uppdatera häst" HorizontalAlignment="Left" Margin="625,417,0,0" VerticalAlignment="Top" Width="143"/>
+        <Button x:Name="btnSaveHorse" Background="ForestGreen" Foreground="White" FontWeight="Bold" Content="Uppdatera häst" HorizontalAlignment="Left" Margin="625,417,0,0" VerticalAlignment="Top" Width="143" Click="btnSaveHorse_Click_1"/>
         <TextBlock x:Name="tbTrainer" HorizontalAlignment="Left" Margin="400,383,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="99"><Run Language="sv-se" Text="Tränare"/><Run Text=":"/></TextBlock>
         <ComboBox x:Name="cbTrainer" HorizontalAlignment="Left" Margin="480,383,0,0" VerticalAlignment="Top" Width="288"/>
 
