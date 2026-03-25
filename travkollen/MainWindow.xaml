@@ -7,8 +7,8 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="550" Width="800">
     <Grid>
-        <TextBox x:Name="txtDateOfBirth" HorizontalAlignment="Left" Margin="121,60,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="175"/>
-        <TextBox x:Name="txtNameOfPerson" HorizontalAlignment="Left" Margin="121,23,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="175"/>
+        <TextBox x:Name="txtDateOfBirth" HorizontalAlignment="Left" Margin="121,60,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="175"/>
+        <TextBox x:Name="txtNameOfPerson" HorizontalAlignment="Left" Margin="121,23,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="175"/>
         <TextBlock HorizontalAlignment="Left" Margin="22,23,0,0" TextWrapping="Wrap" Text="Namn:" VerticalAlignment="Top"/>
         <TextBlock HorizontalAlignment="Left" Margin="22,60,0,0" TextWrapping="Wrap" Text="Födelsedatum:" VerticalAlignment="Top"/>
         <Button x:Name="btnAddPerson" Content="Lägg till person" HorizontalAlignment="Left" Margin="211,99,0,0" VerticalAlignment="Top" Width="85" Click="btnAddPerson_Click"/>

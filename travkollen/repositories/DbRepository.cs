@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Npgsql;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Npgsql;
+using System.Windows.Input;
 using travkollen.Models;
 using travkollen.ViewModels;
 
@@ -186,8 +188,13 @@ namespace travkollen.repositories
                 command.Parameters.AddWithValue("dam_id", horse.DamId ?? (object)DBNull.Value);
                 command.Parameters.AddWithValue("trainer_id", horse.TrainerId);
 
-                int horseId = (int)await command.ExecuteScalarAsync();
-                return horseId;
+                //var something = await command.ExecuteScalarAsync();
+
+                int? horseId = (int?)await command.ExecuteScalarAsync();
+
+
+
+                return (int)horseId;
             }
             catch (PostgresException ex)
             {
@@ -244,10 +251,26 @@ namespace travkollen.repositories
             return result == 1;
         }
 
+        public async Task<int> CountRaceWinsForHorseId(int id)
+        {
+            string sql = "select count(race.id) wins from horse join race on race.....";
+
+            await using var command = _dataSource.CreateCommand(sql);
+
+            command.Parameters.AddWithValue("horseid", id);
+
+            var winCount = (int?)await command.ExecuteScalarAsync();
+
+            if (winCount.HasValue)
+                return winCount.Value;
+
+            return 0;
+        }
+
         public async Task<HorseDetailsViewModel?> GetHorseDetailsViewModel(int id)
         {
             try
-            {
+            { 
                 string query = "select h.id as horse_id, h.name as horse_name, " +
                             "date_part('year',age(current_date,h.date_of_birth)) as age, " +
                             "p.name as trainer_name, t.id as trainer_id, track.name as track_name, " +
@@ -297,6 +320,8 @@ namespace travkollen.repositories
                         DamId = reader.IsDBNull(ordinals.DamId) ? null : reader.GetFieldValue<int?>(ordinals.DamId),
                         ImageUrl = reader.IsDBNull(ordinals.ImgUrl) ? null : reader.GetFieldValue<string?>(ordinals.ImgUrl)
                     };
+
+                    horse.NumberOfWonRaces = await CountRaceWinsForHorseId(id);
                     return horse;
                 }
 

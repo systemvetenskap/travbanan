@@ -19,5 +19,6 @@ namespace travkollen.ViewModels
         public string? DamName { get; set; }
         public int? DamId { get; set; }
         public string? ImageUrl { get; set; }
+        public int NumberOfWonRaces { get; set; }
     }
 }
